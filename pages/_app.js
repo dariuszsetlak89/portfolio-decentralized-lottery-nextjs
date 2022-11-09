@@ -2,7 +2,7 @@ import "../styles/globals.css";
 import { MoralisProvider } from "react-moralis";
 import { NotificationProvider } from "@web3uikit/core";
 
-function MyApp({ Component, pageProps }) {
+function DecentralizedLottery({ Component, pageProps }) {
     return (
         <MoralisProvider initializeOnMount={false}>
             <NotificationProvider>
@@ -12,4 +12,4 @@ function MyApp({ Component, pageProps }) {
     );
 }
 
-export default MyApp;
+export default DecentralizedLottery;
