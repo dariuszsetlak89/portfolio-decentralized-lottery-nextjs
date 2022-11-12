@@ -1,13 +1,22 @@
+import { useMoralis, useWeb3Contract } from "react-moralis";
 import { useState } from "react";
+import { contractAddresses, lotteryAbi } from "../../../constants";
 import StartLotteryModal from "./StartLotteryModal";
 
-export default function StartLottery({ lotteryAddress, lotteryAbi }) {
+export default function StartLottery({ updateUI }) {
+    ///////////////////////////
+    // Read contract address //
+    ///////////////////////////
+    const { chainId: chainIdHex } = useMoralis();
+    // Read connected network ID and contract address of connected network from `contractAddresses` file
+    const chainId = parseInt(chainIdHex);
+    const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+
+    ///////////////////
+    //  State Hooks  //
+    ///////////////////
     const [showModalStart, setShowModalStart] = useState(false);
     const hideModalStart = () => setShowModalStart(false);
-
-    ///////////////////////
-    const entranceFee = 1000000000000000000; // 1 ETH
-    ///////////////////////
 
     return (
         <div>
@@ -24,7 +33,7 @@ export default function StartLottery({ lotteryAddress, lotteryAbi }) {
                 onClose={hideModalStart}
                 lotteryAddress={lotteryAddress}
                 lotteryAbi={lotteryAbi}
-                entranceFee={entranceFee}
+                updateUI={updateUI}
             />
         </div>
     );

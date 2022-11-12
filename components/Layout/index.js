@@ -1,4 +1,3 @@
-import { useMoralis, useWeb3Contract } from "react-moralis";
 import Header from "./Header";
 import Connector from "./Connector";
 import Footer from "./Footer";

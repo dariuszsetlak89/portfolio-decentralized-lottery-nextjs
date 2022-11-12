@@ -1,15 +1,16 @@
-import { Modal, Input, useNotification } from "@web3uikit/core";
-import { useState } from "react";
-import { useMoralis, useWeb3Contract } from "react-moralis";
+import { Modal, useNotification } from "@web3uikit/core";
+import { useWeb3Contract } from "react-moralis";
 import { ethers } from "ethers";
 
-export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, lotteryAbi, entranceFee }) {
-    // Entrance fee
-    const entranceFeeString = entranceFee.toString();
-    const entranceFeeFormatted = ethers.utils.formatUnits(entranceFeeString, "ether");
-    console.log(`Entrance fee from state: ${entranceFeeFormatted} ETH`);
-
+export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, lotteryAbi, entranceFee, updateUI }) {
+    /////////////////////
+    //  Notifications  //
+    /////////////////////
     const dispatch = useNotification();
+
+    ////////////////////////
+    // Contract Functions //
+    ////////////////////////
 
     // Function: joinLottery
     const { runContractFunction: joinLottery } = useWeb3Contract({
@@ -20,6 +21,20 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
         params: {},
     });
 
+    ///////////////////////
+    // Handler Functions //
+    ///////////////////////
+
+    // Start lottery handler
+    const handleJoinLottery = async () => {
+        await joinLottery({
+            onError: (error) => {
+                console.log(error);
+            },
+            onSuccess: handleJoinLotterySuccess,
+        });
+    };
+
     const handleJoinLotterySuccess = async (tx) => {
         await tx.wait(1);
         dispatch({
@@ -28,6 +43,7 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
             title: "Lottery joined!",
             position: "bottomL",
         });
+        updateUI();
         onClose && onClose();
     };
 
@@ -41,18 +57,12 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
                 okText="JOIN"
                 okButtonColor="yellow"
                 cancelText="CANCEL"
-                onOk={() => {
-                    joinLottery({
-                        onError: (error) => {
-                            console.log(error);
-                        },
-                        onSuccess: handleJoinLotterySuccess,
-                    });
-                }}
+                onOk={handleJoinLottery}
                 width="500px"
             >
                 <p className="text-2xl font-medium text-center">
-                    Lottery entrance fee: <span className="font-bold">{entranceFeeFormatted} ETH</span>
+                    Lottery entrance fee:{" "}
+                    <span className="font-bold">{ethers.utils.formatEther(entranceFee.toString())} ETH</span>
                 </p>
             </Modal>
         </div>

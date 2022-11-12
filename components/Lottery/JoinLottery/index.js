@@ -1,13 +1,52 @@
-import { useState } from "react";
+import { useMoralis, useWeb3Contract } from "react-moralis";
+import { useState, useEffect } from "react";
+import { contractAddresses, lotteryAbi } from "../../../constants";
 import JoinLotteryModal from "./JoinLotteryModal";
 
-export default function JoinLottery({ lotteryAddress, lotteryAbi }) {
+export default function JoinLottery({ updateUI }) {
+    ///////////////////////////
+    // Read contract address //
+    ///////////////////////////
+    const { chainId: chainIdHex } = useMoralis();
+    // Read connected network ID and contract address of connected network from `contractAddresses` file
+    const chainId = parseInt(chainIdHex);
+    const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+
+    ///////////////////
+    //  State Hooks  //
+    ///////////////////
     const [showModalJoin, setShowModalJoin] = useState(false);
     const hideModalJoin = () => setShowModalJoin(false);
+    const [entranceFee, setEntranceFee] = useState("0");
+
+    ////////////////////
+    // useEffect Hook //
+    ////////////////////
+    useEffect(() => {
+        handleGetLotteryEntranceFee();
+    }, [showModalJoin]);
+
+    ////////////////////////
+    // Contract Functions //
+    ////////////////////////
+
+    // Function: getLotteryEntranceFee
+    const { runContractFunction: getLotteryEntranceFee } = useWeb3Contract({
+        abi: lotteryAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getLotteryEntranceFee",
+        params: {},
+    });
 
     ///////////////////////
-    const entranceFee = 1000000000000000000; // 1 ETH
+    // Handler Functions //
     ///////////////////////
+
+    // Get lottery entrance fee handler
+    const handleGetLotteryEntranceFee = async () => {
+        const entranceFeeFromCall = (await getLotteryEntranceFee()).toString();
+        setEntranceFee(entranceFeeFromCall);
+    };
 
     return (
         <div>
@@ -25,6 +64,7 @@ export default function JoinLottery({ lotteryAddress, lotteryAbi }) {
                 lotteryAddress={lotteryAddress}
                 lotteryAbi={lotteryAbi}
                 entranceFee={entranceFee}
+                updateUI={updateUI}
             />
         </div>
     );

@@ -1,26 +1,58 @@
-import { Modal, Dropdown, Select, useNotification } from "@web3uikit/core";
-import { useState } from "react";
-import { useMoralis, useWeb3Contract } from "react-moralis";
-import { ethers } from "ethers";
+import { Modal, Select, useNotification } from "@web3uikit/core";
+import { useState, useEffect } from "react";
+// import Select from "react-select";
+import { useWeb3Contract } from "react-moralis";
 
-export default function StartLotteryModal({ isVisible, onClose, lotteryAddress, lotteryAbi }) {
-    const [durationTime, setDurationTime] = useState(0);
-    const [entranceFee, setEntranceFee] = useState(0);
+export default function StartLotteryModal({
+    isVisible,
+    onClose,
+    startLotteryFunction,
+    lotteryAddress,
+    lotteryAbi,
+    updateUI,
+}) {
+    ///////////////////////
+    //  Selector Options //
+    ///////////////////////
+    const selectorOptions = [
+        { id: "0", enumValue: "0", label: "LOW - 0.1 ETH" },
+        { id: "1", enumValue: "1", label: "MEDIUM - 0.5 ETH" },
+        { id: "2", enumValue: "2", label: "HIGH - 1 ETH" },
+    ];
 
-    // Entrance fee
-    const entranceFeeString = entranceFee.toString();
-    const entranceFeeFormatted = ethers.utils.formatUnits(entranceFeeString, "ether");
-    console.log(`Entrance fee from state: ${entranceFeeFormatted} ETH`);
-    // Entrance fee ENUM
-    // const entranceFeeEnum = ethers.BigNumber.from("1");
-    const entranceFeeEnum = 1;
-    console.log("entranceFeeEnum:", entranceFeeEnum.toString());
-    // Lottery duration ENUM
-    // const durationEnum = ethers.BigNumber.from("1");
-    const durationEnum = 1;
-    console.log("durationEnum:", durationEnum.toString());
+    ///////////////////
+    //  State Hooks  //
+    ///////////////////
+    const [entranceFeeSelection, setEntranceFeeSelection] = useState(selectorOptions[0]); // ENUM
+    // console.log("entranceFeeSelection enum:", entranceFeeSelection.enumValue);
+    const [entranceFee, setEntranceFee] = useState("0"); // BigNumber
+    // console.log("entranceFee bigNumber:", entranceFee.toString());
 
+    /////////////////////
+    //  Notifications  //
+    /////////////////////
     const dispatch = useNotification();
+
+    ////////////////////
+    // useEffect Hook //
+    ////////////////////
+    useEffect(() => {
+        handleGetLotteryFeeValues();
+    }, [entranceFeeSelection]);
+
+    ////////////////////////
+    // Contract Functions //
+    ////////////////////////
+
+    // Function: getLotteryFeesValues
+    const { runContractFunction: getLotteryFeesValues } = useWeb3Contract({
+        abi: lotteryAbi,
+        contractAddress: lotteryAddress,
+        functionName: "getLotteryFeesValues",
+        params: {
+            _entranceFee: entranceFeeSelection.enumValue,
+        },
+    });
 
     // Function: startLottery
     const { runContractFunction: startLottery } = useWeb3Contract({
@@ -29,20 +61,34 @@ export default function StartLotteryModal({ isVisible, onClose, lotteryAddress, 
         functionName: "startLottery",
         msgValue: entranceFee,
         params: {
-            _duration: durationEnum,
-            _entranceFee: entranceFeeEnum,
+            _entranceFee: entranceFeeSelection.enumValue,
         },
     });
 
-    // Function: joinLottery
-    const { runContractFunction: joinLottery } = useWeb3Contract({
-        abi: lotteryAbi,
-        contractAddress: lotteryAddress,
-        functionName: "joinLottery",
-        msgValue: entranceFee,
-        params: {},
-    });
+    ///////////////////////
+    // Handler Functions //
+    ///////////////////////
 
+    // Get lottery fee value handler
+    const handleGetLotteryFeeValues = async () => {
+        const enumValue = entranceFeeSelection.enumValue;
+        if (enumValue == 0 || enumValue == 1 || enumValue == 2) {
+            const fee = (await getLotteryFeesValues()).toString();
+            setEntranceFee(fee);
+        }
+    };
+
+    // Start lottery handler
+    const handleStartLottery = async () => {
+        await startLottery({
+            onError: (error) => {
+                console.log(error);
+            },
+            onSuccess: handleStartLotterySuccess,
+        });
+    };
+
+    // Start lottery success handler
     const handleStartLotterySuccess = async (tx) => {
         await tx.wait(1);
         dispatch({
@@ -51,6 +97,8 @@ export default function StartLotteryModal({ isVisible, onClose, lotteryAddress, 
             title: "Lottery started and joined!",
             position: "bottomL",
         });
+        updateUI();
+        setEntranceFeeSelection(selectorOptions[0]);
         onClose && onClose();
     };
 
@@ -59,78 +107,28 @@ export default function StartLotteryModal({ isVisible, onClose, lotteryAddress, 
             <Modal
                 title={<div className="p-2 text-3xl text-green-600 font-bold">Start Lottery</div>}
                 isVisible={isVisible}
+                width="600px"
                 onCancel={onClose}
                 onCloseButtonPressed={onClose}
                 okText="START"
                 okButtonColor="yellow"
                 cancelText="CANCEL"
-                onOk={() => {
-                    startLottery({
-                        onError: (error) => {
-                            console.log(error);
-                        },
-                        onSuccess: handleStartLotterySuccess,
-                    });
-                }}
+                onOk={handleStartLottery}
             >
-                <div className="m-5 text-2xl font-medium flex justify-center">
-                    Select lottery <span className="font-bold"> duration time </span> and{" "}
-                    <span className="font-bold"> entrance fee </span> amount.
-                </div>
+                <div className="m-5 text-2xl font-medium flex justify-center">Select lottery entrance fee amount:</div>
                 <div className="flex justify-center">
                     <div className="mx-5 mt-5 mb-16">
                         <Select
-                            defaultOptionIndex={0}
                             id="Select"
-                            label="Lottery duration time"
-                            onBlurTraditional={function noRefCheck() {}}
-                            onChange={function noRefCheck() {}}
-                            onChangeTraditional={function noRefCheck() {}}
+                            name="Lottery entrance feessss"
+                            description="Lottery entrance fee choice"
+                            label="Lottery entrance fee selector"
                             width="300px"
-                            options={[
-                                {
-                                    id: "fast",
-                                    label: "FAST - 5 minutes",
-                                },
-                                {
-                                    id: "medium",
-                                    label: "MEDIUM - 15 minutes",
-                                },
-                                {
-                                    id: "long",
-                                    label: "LONG - 60 minutes",
-                                },
-                            ]}
-                        />
-                    </div>
-                    <div className="mx-5 mt-5 mb-16">
-                        <Select
-                            defaultOptionIndex={0}
-                            id="Select"
-                            label="Lottery entrance fee"
-                            onBlurTraditional={function noRefCheck() {}}
-                            onChange={function noRefCheck() {}}
-                            onChangeTraditional={function noRefCheck() {}}
-                            width="300px"
+                            height="500px"
                             menuHeight="500px"
-                            options={[
-                                {
-                                    id: "low",
-                                    label: "LOW - 0.05 ETH",
-                                },
-                                {
-                                    id: "medium",
-                                    label: "MEDIUM - 0.1 ETH",
-                                },
-                                {
-                                    id: "high",
-                                    label: "HIGH - 0.5 ETH",
-                                },
-                                {
-                                    id: "veryhigh",
-                                    label: "VERY HIGH - 1 ETH",
-                                },
-                            ]}
+                            options={selectorOptions}
+                            defaultOptionIndex={0}
+                            onChange={setEntranceFeeSelection}
                         />
                     </div>
                 </div>

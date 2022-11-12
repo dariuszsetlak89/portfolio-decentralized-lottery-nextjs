@@ -12,7 +12,13 @@ export default function Header() {
                 />
             </div>
             <div className="m-auto basis-4/6 flex-none justify-center">
-                <Image src="/images/decentralized-lottery-caption.png" alt="Snake wordart" width={1000} height={150} />
+                <Image
+                    src="/images/decentralized-lottery-caption.png"
+                    alt="Snake wordart"
+                    width={1000}
+                    height={150}
+                    priority="true"
+                />
             </div>
 
             <div className="basis-1/6 flex justify-center transform hover:scale-125 transition ease-out duration-500">

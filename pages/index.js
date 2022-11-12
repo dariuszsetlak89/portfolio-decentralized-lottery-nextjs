@@ -9,10 +9,7 @@ export default function Home() {
         <div>
             <Head>
                 <title>Decentralized Lottery</title>
-                <meta
-                    name="description"
-                    content="Provable fair SmartContract Decentralized Lottery"
-                />
+                <meta name="description" content="SmartContract Decentralized Lottery" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Layout>
