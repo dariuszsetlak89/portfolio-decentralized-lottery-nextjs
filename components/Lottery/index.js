@@ -212,7 +212,8 @@ export default function Lottery() {
                         </div>
                     ) : lotteryState == 2 ? (
                         <div className="lotteryStateCalculating">
-                            <p>Lottery in calculating state! Please wait.</p>
+                            <div>Lottery in calculating state! Please wait.</div>
+                            <div className="text-xl">(be patient & refresh)</div>
                         </div>
                     ) : (
                         <div className="lotteryStateUndefined">
@@ -295,7 +296,7 @@ export default function Lottery() {
                         )}
                     </div>
                     {/* Latest lottery winner */}
-                    {latestWinner.toLowerCase() != ethers.constants.AddressZero ? (
+                    {lotteryState == 0 ? (
                         <div className="ml-5">
                             <div className="ml-0 mt-10 mb-2 ">
                                 <div className="text-3xl font-bold">Latest lottery winner:</div>
@@ -314,7 +315,7 @@ export default function Lottery() {
                                     <div className="lotteryWinnerCongrats">!!! Congratulations !!!</div>
                                 </div>
                             ) : (
-                                <div className="lotteryWinnerCaption">You didn't won!</div>
+                                <div className="lotteryWinnerCaption">You didn't won the lottery!</div>
                             )}
                         </div>
                     ) : (

@@ -1,6 +1,7 @@
 import { Modal, Select, useNotification } from "@web3uikit/core";
 import { useState, useEffect } from "react";
 import { useWeb3Contract } from "react-moralis";
+import LoadingSpinner from "../Animations/LoadingSpinner";
 
 export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAbi, updateUI, onClose }) {
     //////////////////////
@@ -15,6 +16,7 @@ export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAb
     /////////////////
     // State Hooks //
     /////////////////
+    const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
     const [entranceFeeSelection, setEntranceFeeSelection] = useState(selectorOptions[0]); // ENUM
     const [entranceFee, setEntranceFee] = useState("0"); // BigNumber
     // console.log("EntranceFee selection enum:", entranceFeeSelection.enumValue);
@@ -74,6 +76,7 @@ export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAb
 
     // Start lottery handler
     const handleStartLottery = async () => {
+        setShowLoadingSpinner(true);
         await startLottery({
             onError: (error) => {
                 console.log(error);
@@ -93,6 +96,7 @@ export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAb
         });
         updateUI();
         setEntranceFeeSelection(selectorOptions[0]);
+        setShowLoadingSpinner(false);
         onClose();
     };
 
@@ -111,7 +115,7 @@ export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAb
         >
             <div className="startLotteryModalContent">Select lottery entrance fee amount:</div>
             <div className="flex justify-center">
-                <div className="mx-5 mt-5 mb-16">
+                <div className="mx-5 mt-5 mb-10">
                     <Select
                         id="Select"
                         name="Lottery entrance fees"
@@ -124,6 +128,13 @@ export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAb
                     />
                 </div>
             </div>
+            {showLoadingSpinner ? (
+                <div>
+                    <LoadingSpinner />
+                </div>
+            ) : (
+                ""
+            )}
         </Modal>
     );
 }

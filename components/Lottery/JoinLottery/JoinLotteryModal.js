@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { Modal, useNotification } from "@web3uikit/core";
 import { useWeb3Contract } from "react-moralis";
 import { ethers } from "ethers";
+import LoadingSpinner from "../Animations/LoadingSpinner";
 
 export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi, entranceFee, updateUI, onClose }) {
+    /////////////////
+    // State Hooks //
+    /////////////////
+    const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+
     /////////////////////
     //  Notifications  //
     /////////////////////
@@ -27,6 +34,7 @@ export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi
 
     // Join lottery handler
     const handleJoinLottery = async () => {
+        setShowLoadingSpinner(true);
         await joinLottery({
             onError: (error) => {
                 console.log(error);
@@ -45,6 +53,7 @@ export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi
             position: "bottomL",
         });
         updateUI();
+        setShowLoadingSpinner(false);
         onClose();
     };
 
@@ -60,10 +69,17 @@ export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi
             onCancel={onClose}
             onCloseButtonPressed={onClose}
         >
-            <p className="joinLotteryModalContent">
+            <div className="joinLotteryModalContent">
                 Lottery entrance fee:{" "}
                 <span className="font-bold">{ethers.utils.formatEther(entranceFee.toString())} ETH</span>
-            </p>
+            </div>
+            {showLoadingSpinner ? (
+                <div>
+                    <LoadingSpinner />
+                </div>
+            ) : (
+                ""
+            )}
         </Modal>
     );
 }

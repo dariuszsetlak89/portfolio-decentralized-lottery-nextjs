@@ -70,8 +70,8 @@ const CountdownTimer = ({ targetTime }) => {
         // console.log(2);
         return (
             <div className="timerTimesUpMessage">
-                <div className="text-3xl">Lottery times up!</div>
-                <div className="text-xl">(refresh)</div>
+                <div className="text-3xl">Calculating...</div>
+                <div className="text-xl">(be patient & refresh)</div>
             </div>
         );
     }

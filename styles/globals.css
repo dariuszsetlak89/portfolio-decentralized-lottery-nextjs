@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .outerBackground {
-    @apply font-sans pt-10 pb-40 bg-blue-200;
+    @apply font-sans pt-10 pb-10 bg-blue-200 min-h-screen;
 }
 
 .innerBackground {
@@ -55,7 +55,7 @@
 }
 
 .joinLotteryModalContent {
-    @apply m-5 text-2xl font-medium;
+    @apply mx-5 mt-5 mb-10 text-2xl font-medium;
 }
 
 .lotteryWinnerModalTitle {
@@ -63,7 +63,7 @@
 }
 
 .lotteryWinnerCaption {
-    @apply mt-2 mb-5 font-bold text-2xl text-red-500 text-center;
+    @apply m-5 font-bold text-2xl text-red-600 text-center;
 }
 
 .lotteryWinnerCongrats {
@@ -71,7 +71,7 @@
 }
 
 .timer {
-    @apply mb-5 text-5xl text-red-500 font-semibold flex flex-row justify-center absolute;
+    @apply mb-5 text-5xl text-red-600 font-semibold flex flex-row justify-center absolute;
 }
 
 .timerMinutes {
@@ -87,7 +87,7 @@
 }
 
 .timerTimesUpMessage {
-    @apply text-red-500 font-semibold text-center;
+    @apply text-red-600 font-semibold text-center;
 }
 
 .lotteryStateCalculating {
@@ -99,5 +99,5 @@
 }
 
 .lotteryAddressNotFound {
-    @apply m-5 text-red-500 text-center;
+    @apply m-5 text-red-600 text-center;
 }
