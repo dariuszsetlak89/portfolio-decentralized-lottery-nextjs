@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import React from "react";
 
-// Hook
+///////////////////////
+// useCountdown Hook //
+///////////////////////
 const useCountdown = (targetTime) => {
+    ////////////////////
+    // Countdown Time //
+    ////////////////////
     const countDownTime = new Date(targetTime).getTime();
 
+    ///////////////////
+    //  State Hooks  //
+    ///////////////////
     const [countDown, setCountDown] = useState(countDownTime - new Date().getTime());
 
+    //////////////////////
+    //  useEffect Hook  //
+    //////////////////////
     useEffect(() => {
         const interval = setInterval(() => {
             // console.log(3);
@@ -19,35 +30,48 @@ const useCountdown = (targetTime) => {
         return () => clearInterval(interval);
     }, [countDownTime]);
 
-    // Calculate time left
-    // Minutes
+    /////////////////////////
+    // Calculate time left //
+    /////////////////////////
     const minutesNumber = Math.floor((countDown % (1000 * 60 * 60)) / (1000 * 60));
     const minutesString = minutesNumber >= 10 ? `${minutesNumber}` : `0${minutesNumber}`;
-    //Seconds
     const secondsNumber = Math.floor((countDown % (1000 * 60)) / 1000);
     const secondsString = secondsNumber >= 10 ? `${secondsNumber}` : `0${secondsNumber}`;
+    // console.log(`minutes: ${minutesNumber}, seconds: ${secondsNumber}`);
 
     return [minutesNumber, secondsNumber, minutesString, secondsString];
 };
 
+//////////////////////////////
+// Countdown Timer Function //
+//////////////////////////////
 const CountdownTimer = ({ targetTime }) => {
+    ///////////////////////
+    // useCountdown Hook //
+    ///////////////////////
     const [minutesNumber, secondsNumber, minutesString, secondsString] = useCountdown(targetTime * 1000);
 
-    if (minutesNumber + secondsNumber >= 0) {
+    //////////////////
+    //  Show timer  //
+    //////////////////
+    if (minutesNumber + secondsNumber > 0) {
+        // Show timer
         // console.log(`minutes: ${minutesNumber}, seconds: ${secondsNumber}`);
-        console.log(1);
+        // console.log(1);
         return (
-            <div className="mb-5 text-5xl text-red-500 font-semibold flex flex-row justify-center absolute">
-                <div className="relative left-16">{minutesString}</div>
-                <div className="mx-2 relative left-16">:</div>
-                <div className="relative left-16">{secondsString}</div>
+            <div className="timer">
+                <div className="timerMinutes">{minutesString}</div>
+                <div className="timerSeparator">:</div>
+                <div className="timerSeconds">{secondsString}</div>
             </div>
         );
     } else {
-        console.log(2);
+        // Show time up message
+        // console.log(2);
         return (
-            <div className="mb-5 text-3xl text-red-500 font-semibold flex justify-center">
-                <p>Lottery times up!</p>
+            <div className="timerTimesUpMessage">
+                <div className="text-3xl">Lottery times up!</div>
+                <div className="text-xl">(refresh)</div>
             </div>
         );
     }

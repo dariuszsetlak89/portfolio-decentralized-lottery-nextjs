@@ -1,5 +1,3 @@
-import { useMoralis } from "react-moralis";
-
 import Head from "next/head";
 import Layout from "../components/Layout";
 import Lottery from "../components/Lottery";

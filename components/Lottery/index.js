@@ -1,22 +1,26 @@
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import Image from "next/image";
 import { contractAddresses, lotteryAbi } from "../../constants";
 import StartLottery from "./StartLottery";
 import JoinLottery from "./JoinLottery";
-import Image from "next/image";
 import CountdownTimer from "./Timer";
 
 export default function Lottery() {
-    const { isWeb3Enabled, chainId: chainIdHex } = useMoralis();
+    /////////////////////
+    // useMoralis Hook //
+    /////////////////////
+    const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis();
 
     ///////////////////////////
     // Read contract address //
     ///////////////////////////
 
-    // Read connected network ID and contract address of connected network from `contractAddresses` file
+    // Read connected network ID and contract address from `contractAddresses` file
     const chainId = parseInt(chainIdHex);
     const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+    // console.log("chainId:", chainId);
 
     ///////////////////
     //  State Hooks  //
@@ -35,17 +39,19 @@ export default function Lottery() {
     /////////////////////
     // useEffect Hooks //
     /////////////////////
+
+    // UpdateUI
     useEffect(() => {
         if (isWeb3Enabled && lotteryAddress) {
             updateUI();
         }
-    }, [isWeb3Enabled, lotteryState]);
+    }, [isWeb3Enabled, chainId, lotteryState]);
 
     ////////////////////////
     // Contract Functions //
     ////////////////////////
 
-    // Function: getLotteryState
+    // Contract function: getLotteryState
     const { runContractFunction: getLotteryState } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -53,7 +59,7 @@ export default function Lottery() {
         params: {},
     });
 
-    // Function: getLotteryEntranceFee
+    // Contract function: getLotteryEntranceFee
     const { runContractFunction: getLotteryEntranceFee } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -61,7 +67,7 @@ export default function Lottery() {
         params: {},
     });
 
-    // Function: getLotteryPlayersNumber
+    // Contract function: getLotteryPlayersNumber
     const { runContractFunction: getLotteryPlayersNumber } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -69,7 +75,7 @@ export default function Lottery() {
         params: {},
     });
 
-    // Function: getLotteryBalance
+    // Contract function: getLotteryBalance
     const { runContractFunction: getLotteryBalance } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -77,7 +83,7 @@ export default function Lottery() {
         params: {},
     });
 
-    // Function: getLotteryDurationTime
+    // Contract function: getLotteryDurationTime
     const { runContractFunction: getLotteryDurationTime } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -85,7 +91,7 @@ export default function Lottery() {
         params: {},
     });
 
-    // Function: getLotteryStartTimeStamp
+    // Contract function: getLotteryStartTimeStamp
     const { runContractFunction: getLotteryStartTimeStamp } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -93,7 +99,7 @@ export default function Lottery() {
         params: {},
     });
 
-    // Function: getLatestLotteryWinner
+    // Contract function: getLatestLotteryWinner
     const { runContractFunction: getLatestLotteryWinner } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -105,74 +111,80 @@ export default function Lottery() {
     // UI Functions //
     //////////////////
 
+    // UpdateUI function
     async function updateUI() {
-        // Read and set lottery state
+        // Lottery state
         const lotteryStateFromCall = await getLotteryState();
-        // const lotteryStateFormatted = ethers.utils.formatUnits(lotteryStateFromCall, "ether");
         setLotteryState(lotteryStateFromCall);
-        // console.log(`Lottery state from state: ${lotteryState}`);
+        // console.log(`Lottery state: ${lotteryState}`);
 
-        // Read and set entrance fee
+        // Entrance fee
         const entranceFeeFromCall = (await getLotteryEntranceFee()).toString();
         const entranceFeeFormatted = ethers.utils.formatUnits(entranceFeeFromCall, "ether");
         setEntranceFee(entranceFeeFormatted);
-        // console.log(`Entrance fee from state: ${entranceFeeFormatted} ETH`);
+        // console.log(`Entrance fee: ${entranceFee} ETH`);
 
-        // Read and set players number
+        // Players number
         const playersNumberFromCall = (await getLotteryPlayersNumber()).toString();
         setPlayersNumber(playersNumberFromCall);
-        // console.log(`Players number from call: ${playersNumberFromCall} `);
+        // console.log(`Players number: ${playersNumber}`);
 
-        // Read and set contract balance
+        // Contract balance
         const balanceFromCall = (await getLotteryBalance()).toString();
         const balanceFromCallFormatted = ethers.utils.formatUnits(balanceFromCall, "ether");
         setBalance(balanceFromCallFormatted);
-        // console.log(`Balance from call: ${balanceFromCallFormatted} ETH`);
+        // console.log(`Balance: ${balance} ETH`);
 
-        // Read and set lottery duration time [ENUM]
+        // Lottery duration time [ENUM]
         const durationTimeFromCall = (await getLotteryDurationTime()).toString();
         setDurationTime(durationTimeFromCall);
-        // console.log(`Duration time from call: ${durationTimeFromCall} `);
+        // console.log(`Duration time: ${durationTime} seconds`);
 
-        // Read and set lottery start time stamp
+        // Lottery start time stamp
         const startTimeStampFromCall = (await getLotteryStartTimeStamp()).toString();
         setStartTimeStamp(startTimeStampFromCall);
-        // console.log(`Start time stamp from call: ${startTimeStampFromCall} `);
+        // console.log(`Start time stamp: ${startTimeStamp}`);
 
-        // Read and set lottery end time stamp
+        // Lottery end time stamp
         const endTimeStampFromCall = (
             (await getLotteryStartTimeStamp()).toNumber() + (await getLotteryDurationTime()).toNumber()
         ).toString();
         setEndTimeStamp(endTimeStampFromCall);
-        // console.log(`End time stamp from call: ${endTimeStampFromCall} `);
+        // console.log(`End time stamp: ${endTimeStamp} `);
 
         // Lottery start time
-        const startTime = new Date((await getLotteryStartTimeStamp()).toNumber() * 1000).toLocaleTimeString();
-        // console.log("startTime:", startTime);
-        setLotteryStartTime(startTime);
-        // console.log("lotteryStartTime:", lotteryStartTime);
+        const startTimeFromCall = new Date((await getLotteryStartTimeStamp()).toNumber() * 1000).toLocaleTimeString();
+        setLotteryStartTime(startTimeFromCall);
+        // console.log("Lottery start time:", lotteryStartTime);
 
         // Lottery end time
-        const endTime = new Date(
+        const endTimeFromCall = new Date(
             ((await getLotteryStartTimeStamp()).toNumber() + (await getLotteryDurationTime()).toNumber()) * 1000
         ).toLocaleTimeString();
-        // console.log("endTime:", endTime);
-        setLotteryEndTime(endTime);
-        // console.log("lotterytEndTime:", lotteryEndTime);
+        setLotteryEndTime(endTimeFromCall);
+        // console.log("Lottery end time:", lotteryEndTime);
 
-        // Read and set latest lottery winner
+        // Latest lottery winner
         const latestWinnerFromCall = (await getLatestLotteryWinner()).toString();
         setLatestWinner(latestWinnerFromCall);
-        // console.log(`Latest winner from call: ${latestWinnerFromCall} `);
+        // console.log(`Latest lottery winner: ${latestWinner}`);
     }
 
-    const addressCutter = (fullAddress, shortAddressLength) => {
-        if (fullAddress.length <= shortAddressLength) return fullAddress;
-        const separator = "...";
-        const frontChars = fullAddress.substring(0, 6);
-        const backChars = fullAddress.substring(fullAddress.length - 4);
-        return frontChars + separator + backChars;
-    };
+    //////////////////////
+    // Helper Functions //
+    //////////////////////
+
+    // Address cutter function
+    function addressCutter(fullAddress, shortAddressLength) {
+        if (fullAddress.length <= shortAddressLength) {
+            return fullAddress;
+        } else {
+            const separator = "...";
+            const frontChars = fullAddress.substring(0, 6);
+            const backChars = fullAddress.substring(fullAddress.length - 4);
+            return frontChars + separator + backChars;
+        }
+    }
 
     return (
         <div>
@@ -180,48 +192,53 @@ export default function Lottery() {
                 <div className="flex flex-col items-center">
                     {/* Start or join lottery button */}
                     {lotteryState == 0 ? (
-                        <StartLottery updateUI={async () => await updateUI()} />
+                        <StartLottery
+                            lotteryAddress={lotteryAddress}
+                            lotteryAbi={lotteryAbi}
+                            updateUI={() => updateUI()}
+                        />
                     ) : lotteryState == 1 ? (
                         <div className="h-48 flex-row align-center">
                             <div>
-                                <JoinLottery updateUI={async () => await updateUI()} />
+                                <JoinLottery
+                                    lotteryAddress={lotteryAddress}
+                                    lotteryAbi={lotteryAbi}
+                                    updateUI={() => updateUI()}
+                                />
                             </div>
                             <div>
                                 <CountdownTimer targetTime={endTimeStamp} />
                             </div>
-                            <div>{/* <Countdown date={new Date(endTimeStamp * 1000)} /> */}</div>
                         </div>
                     ) : lotteryState == 2 ? (
-                        <div className="m-2 p-2 text-3xl text-center text-red-600 font-medium">
+                        <div className="lotteryStateCalculating">
                             <p>Lottery in calculating state! Please wait.</p>
                         </div>
                     ) : (
-                        <div className="m-2 p-2 text-3xl text-center text-red-600 font-medium">
+                        <div className="lotteryStateUndefined">
                             <p>Lottery state undefined. Please refresh the page.</p>
                         </div>
                     )}
                     {/* Refresh button */}
                     <div className="p-3 flex justify-center">
-                        <div
-                            className="p-3 rounded-full bg-amber-200 hover:bg-amber-400 active:bg-amber-500 cursor-pointer
-                            transform hover:scale-125 transition ease-out duration-1000 hover:rotate-180"
-                        >
+                        <div className="refreshButton">
                             <Image
                                 src="/images/refresh.png"
                                 alt="Refresh icon"
                                 width={32}
                                 height={32}
-                                onClick={async () => await updateUI()}
+                                onClick={() => updateUI()}
+                                className="hover:animate-spin"
                             />
                         </div>
                     </div>
                     {/* Current lottery data */}
                     <div>
-                        <div className=" mb-2">
+                        <div className="mb-2">
                             <div className="text-3xl font-bold">Lottery data:</div>
                         </div>
-
-                        <table className="table-auto m-auto text-2xl">
+                        {/* Lottery data: lottery state */}
+                        <table className="table-auto ml-6 text-2xl">
                             <tbody>
                                 <tr>
                                     <td className="w-48">Lottery state:</td>
@@ -237,8 +254,9 @@ export default function Lottery() {
                                 </tr>
                             </tbody>
                         </table>
+                        {/* Lottery data: other data */}
                         {lotteryState == 0 ? (
-                            "" // Lottery data hidden
+                            "" // Lottery data hidden when lottery is not in OPEN state
                         ) : lotteryState == 1 || lotteryState == 2 ? (
                             <table className="table-auto ml-6 text-2xl">
                                 <tbody>
@@ -271,29 +289,41 @@ export default function Lottery() {
                                 </tbody>
                             </table>
                         ) : (
-                            <div className="m-2 p-2 text-3xl text-center text-red-600 font-medium">
+                            <div className="lotteryStateUndefined">
                                 <p>Lottery state undefined. Please refresh the page.</p>
                             </div>
                         )}
                     </div>
-                    {/* Latest winner data */}
-                    <div className="ml-10">
-                        <div className="flex items-center mt-10 mb-2">
-                            <div className="text-3xl font-bold">Latest lottery winner:</div>
+                    {/* Latest lottery winner */}
+                    {latestWinner.toLowerCase() != ethers.constants.AddressZero ? (
+                        <div className="ml-5">
+                            <div className="ml-0 mt-10 mb-2 ">
+                                <div className="text-3xl font-bold">Latest lottery winner:</div>
+                            </div>
+                            <table className="table-auto m-auto text-2xl">
+                                <tbody>
+                                    <tr>
+                                        <td className="w-48">Winner address:</td>
+                                        <td className="font-medium">{addressCutter(latestWinner || "", 15)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            {latestWinner.toLowerCase() == account ? (
+                                <div>
+                                    <div className="lotteryWinnerCaption">You won the lottery!</div>
+                                    <div className="lotteryWinnerCongrats">!!! Congratulations !!!</div>
+                                </div>
+                            ) : (
+                                <div className="lotteryWinnerCaption">You didn't won!</div>
+                            )}
                         </div>
-                        <table className="table-auto m-auto text-2xl">
-                            <tbody>
-                                <tr>
-                                    <td className="w-48">Winner address:</td>
-                                    <td className="font-medium">{addressCutter(latestWinner || "", 15)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    ) : (
+                        ""
+                    )}
                 </div>
             ) : (
-                <div className="m-5 text-3xl text-red-500 text-center font-normal">
-                    <p className="font-medium">
+                <div className="lotteryAddressNotFound">
+                    <p className="text-3xl font-medium">
                         <span className="font-bold">Ooops...</span> Lottery address not found.
                     </p>
                     <p className="text-2xl">Please switch to another supported chain.</p>

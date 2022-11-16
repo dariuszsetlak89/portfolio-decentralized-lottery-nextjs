@@ -8,7 +8,7 @@ export default function Header({ children }) {
 
     return (
         <div>
-            <div className="border-b-4 p-10 border-amber-400">
+            <div className="border-b-4 p-10 border-blue-400">
                 <div className="flex justify-center p-2 ">
                     <ConnectButton moralisAuth={false} />
                 </div>

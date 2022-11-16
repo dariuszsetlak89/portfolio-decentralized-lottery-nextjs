@@ -1,6 +1,6 @@
-import "../styles/globals.css";
 import { MoralisProvider } from "react-moralis";
 import { NotificationProvider } from "@web3uikit/core";
+import "../styles/globals.css";
 
 function DecentralizedLottery({ Component, pageProps }) {
     return (

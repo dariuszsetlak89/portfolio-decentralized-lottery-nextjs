@@ -2,7 +2,7 @@ import { Modal, useNotification } from "@web3uikit/core";
 import { useWeb3Contract } from "react-moralis";
 import { ethers } from "ethers";
 
-export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, lotteryAbi, entranceFee, updateUI }) {
+export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi, entranceFee, updateUI, onClose }) {
     /////////////////////
     //  Notifications  //
     /////////////////////
@@ -12,7 +12,7 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
     // Contract Functions //
     ////////////////////////
 
-    // Function: joinLottery
+    // Contract function: joinLottery
     const { runContractFunction: joinLottery } = useWeb3Contract({
         abi: lotteryAbi,
         contractAddress: lotteryAddress,
@@ -25,7 +25,7 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
     // Handler Functions //
     ///////////////////////
 
-    // Start lottery handler
+    // Join lottery handler
     const handleJoinLottery = async () => {
         await joinLottery({
             onError: (error) => {
@@ -35,6 +35,7 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
         });
     };
 
+    // Join lottery success handler
     const handleJoinLotterySuccess = async (tx) => {
         await tx.wait(1);
         dispatch({
@@ -44,27 +45,25 @@ export default function JoinLotteryModal({ isVisible, onClose, lotteryAddress, l
             position: "bottomL",
         });
         updateUI();
-        onClose && onClose();
+        onClose();
     };
 
     return (
-        <div className="flex">
-            <Modal
-                title={<div className="p-2 text-3xl text-green-600 font-bold">Join Lottery</div>}
-                isVisible={isVisible}
-                onCancel={onClose}
-                onCloseButtonPressed={onClose}
-                okText="JOIN"
-                okButtonColor="yellow"
-                cancelText="CANCEL"
-                onOk={handleJoinLottery}
-                width="500px"
-            >
-                <p className="text-2xl font-medium text-center">
-                    Lottery entrance fee:{" "}
-                    <span className="font-bold">{ethers.utils.formatEther(entranceFee.toString())} ETH</span>
-                </p>
-            </Modal>
-        </div>
+        <Modal
+            title={<div className="joinLotteryModalTitle">Join Lottery</div>}
+            isVisible={isVisible}
+            width="600px"
+            okText="JOIN LOTTERY"
+            okButtonColor="blue"
+            cancelText="CANCEL"
+            onOk={handleJoinLottery}
+            onCancel={onClose}
+            onCloseButtonPressed={onClose}
+        >
+            <p className="joinLotteryModalContent">
+                Lottery entrance fee:{" "}
+                <span className="font-bold">{ethers.utils.formatEther(entranceFee.toString())} ETH</span>
+            </p>
+        </Modal>
     );
 }

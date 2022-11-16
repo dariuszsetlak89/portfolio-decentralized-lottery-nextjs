@@ -1,3 +1,103 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.outerBackground {
+    @apply font-sans pt-10 pb-40 bg-blue-200;
+}
+
+.innerBackground {
+    @apply mx-auto max-w-4xl overflow-hidden border-4 border-blue-400 rounded-xl bg-blue-300;
+}
+
+.footer {
+    @apply fixed bottom-0 left-0;
+}
+
+.headerBall {
+    @apply basis-1/6 flex justify-center transform hover:scale-125 transition ease-out duration-500;
+}
+
+.headerCaption {
+    @apply m-auto basis-4/6 flex justify-center;
+}
+
+.footerBall {
+    @apply basis-1/5 flex justify-center transform hover:scale-125 transition ease-out duration-500;
+}
+
+.refreshButton {
+    @apply p-4 rounded-full bg-blue-200 hover:bg-blue-400 active:bg-blue-500 cursor-pointer transform hover:scale-125 transition ease-out duration-1000;
+}
+
+.startLotteryButton {
+    @apply m-5 p-5 w-56 text-3xl text-blue-700 font-medium bg-blue-400 hover:bg-blue-500 active:bg-blue-600 border-4 border-blue-600 rounded-2xl transform hover:scale-125 transition ease-out duration-500;
+}
+
+.joinLotteryButton {
+    @apply m-5 p-5 w-56 text-3xl text-blue-700 font-medium bg-blue-400 hover:bg-blue-500 active:bg-blue-600 border-4 border-blue-600 rounded-2xl transform hover:scale-125 transition ease-out duration-500;
+}
+
+.checkWinnerButton {
+    @apply m-5 p-3 w-56 text-2xl text-cyan-700 font-medium bg-cyan-400 hover:bg-cyan-500 active:bg-cyan-600 border-4 border-cyan-600 rounded-2xl transform hover:scale-125 transition ease-out duration-500;
+}
+
+.startLotteryModalTitle {
+    @apply p-2 text-3xl text-blue-600 font-bold;
+}
+
+.startLotteryModalContent {
+    @apply m-5 text-2xl font-medium;
+}
+
+.joinLotteryModalTitle {
+    @apply p-2 text-3xl text-blue-600 font-bold;
+}
+
+.joinLotteryModalContent {
+    @apply m-5 text-2xl font-medium;
+}
+
+.lotteryWinnerModalTitle {
+    @apply p-2 text-3xl text-green-600 font-bold;
+}
+
+.lotteryWinnerCaption {
+    @apply mt-2 mb-5 font-bold text-2xl text-red-500 text-center;
+}
+
+.lotteryWinnerCongrats {
+    @apply text-3xl text-green-500 font-bold text-center animate-bounce;
+}
+
+.timer {
+    @apply mb-5 text-5xl text-red-500 font-semibold flex flex-row justify-center absolute;
+}
+
+.timerMinutes {
+    @apply relative left-16;
+}
+
+.timerSeparator {
+    @apply mx-2 relative left-16;
+}
+
+.timerSeconds {
+    @apply relative left-16;
+}
+
+.timerTimesUpMessage {
+    @apply text-red-500 font-semibold text-center;
+}
+
+.lotteryStateCalculating {
+    @apply m-2 p-2 text-3xl text-center text-red-600 font-medium;
+}
+
+.lotteryStateUndefined {
+    @apply m-2 p-2 text-3xl text-center text-red-600 font-medium;
+}
+
+.lotteryAddressNotFound {
+    @apply m-5 text-red-500 text-center;
+}
