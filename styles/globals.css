@@ -7,7 +7,7 @@
 }
 
 .innerBackground {
-    @apply mx-auto max-w-4xl overflow-hidden border-4 border-blue-400 rounded-xl bg-blue-300;
+    @apply mx-auto max-w-4xl overflow-hidden border-4 border-blue-400 bg-blue-300 rounded-3xl;
 }
 
 .footer {
@@ -22,12 +22,48 @@
     @apply m-auto basis-4/6 flex justify-center;
 }
 
+.headerChildren {
+    @apply border-b-4 p-10 border-blue-400;
+}
+
+.footerDescriptionOLD {
+    @apply p-2 text-center font-medium text-xl text-blue-600;
+}
+
 .footerBall {
-    @apply basis-1/5 flex justify-center transform hover:scale-125 transition ease-out duration-500;
+    @apply basis-1/5 flex justify-center transform hover:scale-125 transition ease-in-out duration-500;
+}
+
+.footerDescription {
+    @apply mt-5 flex justify-evenly;
+}
+
+.footerDescriptionText {
+    @apply p-5 text-2xl font-medium opacity-50 hover:opacity-100;
+}
+
+.footerDescriptionIcon {
+    @apply p-5 text-xl opacity-50 hover:opacity-100 rounded-full transition ease-in-out duration-500 cursor-pointer;
+}
+
+.connectorButton {
+    @apply flex justify-center p-2;
+}
+
+.connectorConnected {
+    @apply p-2 text-3xl text-center text-green-600 font-bold;
+}
+
+.connectorNotSupportedChain {
+    @apply p-2 text-center text-red-600;
+}
+
+.connectorPleaseConnect {
+    @apply p-2 text-3xl text-center text-red-600 font-bold;
 }
 
 .refreshButton {
-    @apply p-4 rounded-full bg-blue-200 hover:bg-blue-400 active:bg-blue-500 cursor-pointer transform hover:scale-125 transition ease-out duration-1000;
+    @apply p-3 rounded-full bg-blue-200 hover:bg-blue-400 active:bg-blue-500 cursor-pointer transform hover:scale-125 transition ease-in-out duration-1000;
 }
 
 .startLotteryButton {

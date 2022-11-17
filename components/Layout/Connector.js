@@ -8,8 +8,8 @@ export default function Header({ children }) {
 
     return (
         <div>
-            <div className="border-b-4 p-10 border-blue-400">
-                <div className="flex justify-center p-2 ">
+            <div className="headerChildren">
+                <div className="connectorButton">
                     <ConnectButton moralisAuth={false} />
                 </div>
                 <div>
@@ -17,14 +17,14 @@ export default function Header({ children }) {
                         <div>
                             {supportedChainsIds.includes(parseInt(chainId).toString()) ? (
                                 <div>
-                                    <div className="p-2 text-3xl text-center text-green-600 font-bold">
+                                    <div className="connectorConnected">
                                         <p>Connected!</p>
                                     </div>
                                     <div>{children}</div>
                                 </div>
                             ) : (
                                 <div>
-                                    <div className="p-2 text-center text-red-600">
+                                    <div className="connectorNotSupportedChain">
                                         <p className="text-3xl font-bold">Not supported chain!</p>
                                         <p className="p-2 text-2xl">{`Supported chains IDs: ${supportedChainsIds}`}</p>
                                     </div>
@@ -32,7 +32,7 @@ export default function Header({ children }) {
                             )}
                         </div>
                     ) : (
-                        <div className="p-2 text-3xl text-center text-red-600 font-bold">
+                        <div className="connectorPleaseConnect">
                             <p>Please connect to a wallet!</p>
                         </div>
                     )}

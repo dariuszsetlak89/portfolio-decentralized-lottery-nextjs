@@ -16,11 +16,8 @@ export default function Lottery() {
     ///////////////////////////
     // Read contract address //
     ///////////////////////////
-
-    // Read connected network ID and contract address from `contractAddresses` file
     const chainId = parseInt(chainIdHex);
     const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
-    // console.log("chainId:", chainId);
 
     ///////////////////
     //  State Hooks  //
