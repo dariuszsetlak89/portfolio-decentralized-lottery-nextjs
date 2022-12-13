@@ -5,19 +5,9 @@ import { ethers } from "ethers";
 import LoadingSpinner from "../Animations/LoadingSpinner";
 
 export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi, entranceFee, updateUI, onClose }) {
-    /////////////////
-    // State Hooks //
-    /////////////////
     const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
-    /////////////////////
-    //  Notifications  //
-    /////////////////////
     const dispatch = useNotification();
-
-    ////////////////////////
-    // Contract Functions //
-    ////////////////////////
 
     // Contract function: joinLottery
     const { runContractFunction: joinLottery } = useWeb3Contract({
@@ -27,10 +17,6 @@ export default function JoinLotteryModal({ isVisible, lotteryAddress, lotteryAbi
         msgValue: entranceFee,
         params: {},
     });
-
-    ///////////////////////
-    // Handler Functions //
-    ///////////////////////
 
     // Join lottery handler
     const handleJoinLottery = async () => {

@@ -2,9 +2,6 @@ import { useState } from "react";
 import StartLotteryModal from "./StartLotteryModal";
 
 export default function StartLottery({ lotteryAddress, lotteryAbi, updateUI }) {
-    ///////////////////
-    //  State Hooks  //
-    ///////////////////
     const [showStartLotteryModal, setShowStartLotteryModal] = useState(false);
     const hideStartLotteryModal = () => setShowStartLotteryModal(false);
 

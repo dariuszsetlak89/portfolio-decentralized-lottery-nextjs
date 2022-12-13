@@ -4,39 +4,21 @@ import { useWeb3Contract } from "react-moralis";
 import LoadingSpinner from "../Animations/LoadingSpinner";
 
 export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAbi, updateUI, onClose }) {
-    //////////////////////
-    // Selector Options //
-    //////////////////////
     const selectorOptions = [
         { id: "0", enumValue: "0", label: "LOW - 0.1 ETH" },
         { id: "1", enumValue: "1", label: "MEDIUM - 0.5 ETH" },
         { id: "2", enumValue: "2", label: "HIGH - 1 ETH" },
     ];
 
-    /////////////////
-    // State Hooks //
-    /////////////////
     const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
     const [entranceFeeSelection, setEntranceFeeSelection] = useState(selectorOptions[0]); // ENUM
     const [entranceFee, setEntranceFee] = useState("0"); // BigNumber
-    // console.log("EntranceFee selection enum:", entranceFeeSelection.enumValue);
-    // console.log("EntranceFee bigNumber:", entranceFee.toString());
 
-    ///////////////////
-    // Notifications //
-    ///////////////////
     const dispatch = useNotification();
 
-    ////////////////////
-    // useEffect Hook //
-    ////////////////////
     useEffect(() => {
         handleGetLotteryFeesValues();
     }, [entranceFeeSelection]);
-
-    ////////////////////////
-    // Contract Functions //
-    ////////////////////////
 
     // Contract function: getLotteryFeesValues
     const { runContractFunction: getLotteryFeesValues } = useWeb3Contract({
@@ -58,10 +40,6 @@ export default function StartLotteryModal({ isVisible, lotteryAddress, lotteryAb
             _entranceFee: entranceFeeSelection.enumValue,
         },
     });
-
-    ///////////////////////
-    // Handler Functions //
-    ///////////////////////
 
     // Get lottery fees values handler
     const handleGetLotteryFeesValues = async () => {

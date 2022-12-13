@@ -8,20 +8,11 @@ import JoinLottery from "./JoinLottery";
 import CountdownTimer from "./Timer";
 
 export default function Lottery() {
-    /////////////////////
-    // useMoralis Hook //
-    /////////////////////
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis();
 
-    ///////////////////////////
-    // Read contract address //
-    ///////////////////////////
     const chainId = parseInt(chainIdHex);
     const lotteryAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
 
-    ///////////////////
-    //  State Hooks  //
-    ///////////////////
     const [lotteryState, setLotteryState] = useState("0");
     const [entranceFee, setEntranceFee] = useState("0");
     const [playersNumber, setPlayersNumber] = useState("0");
@@ -33,20 +24,12 @@ export default function Lottery() {
     const [lotteryEndTime, setLotteryEndTime] = useState("0");
     const [latestWinner, setLatestWinner] = useState("0");
 
-    /////////////////////
-    // useEffect Hooks //
-    /////////////////////
-
     // UpdateUI
     useEffect(() => {
         if (isWeb3Enabled && lotteryAddress) {
             updateUI();
         }
     }, [isWeb3Enabled, chainId, lotteryState]);
-
-    ////////////////////////
-    // Contract Functions //
-    ////////////////////////
 
     // Contract function: getLotteryState
     const { runContractFunction: getLotteryState } = useWeb3Contract({
@@ -104,67 +87,53 @@ export default function Lottery() {
         params: {},
     });
 
-    //////////////////
-    // UI Functions //
-    //////////////////
-
     // UpdateUI function
     async function updateUI() {
         // Lottery state
         const lotteryStateFromCall = await getLotteryState();
         setLotteryState(lotteryStateFromCall);
-        // console.log(`Lottery state: ${lotteryState}`);
 
         // Entrance fee
         const entranceFeeFromCall = (await getLotteryEntranceFee()).toString();
         const entranceFeeFormatted = ethers.utils.formatUnits(entranceFeeFromCall, "ether");
         setEntranceFee(entranceFeeFormatted);
-        // console.log(`Entrance fee: ${entranceFee} ETH`);
 
         // Players number
         const playersNumberFromCall = (await getLotteryPlayersNumber()).toString();
         setPlayersNumber(playersNumberFromCall);
-        // console.log(`Players number: ${playersNumber}`);
 
         // Contract balance
         const balanceFromCall = (await getLotteryBalance()).toString();
         const balanceFromCallFormatted = ethers.utils.formatUnits(balanceFromCall, "ether");
         setBalance(balanceFromCallFormatted);
-        // console.log(`Balance: ${balance} ETH`);
 
         // Lottery duration time [ENUM]
         const durationTimeFromCall = (await getLotteryDurationTime()).toString();
         setDurationTime(durationTimeFromCall);
-        // console.log(`Duration time: ${durationTime} seconds`);
 
         // Lottery start time stamp
         const startTimeStampFromCall = (await getLotteryStartTimeStamp()).toString();
         setStartTimeStamp(startTimeStampFromCall);
-        // console.log(`Start time stamp: ${startTimeStamp}`);
 
         // Lottery end time stamp
         const endTimeStampFromCall = (
             (await getLotteryStartTimeStamp()).toNumber() + (await getLotteryDurationTime()).toNumber()
         ).toString();
         setEndTimeStamp(endTimeStampFromCall);
-        // console.log(`End time stamp: ${endTimeStamp} `);
 
         // Lottery start time
         const startTimeFromCall = new Date((await getLotteryStartTimeStamp()).toNumber() * 1000).toLocaleTimeString();
         setLotteryStartTime(startTimeFromCall);
-        // console.log("Lottery start time:", lotteryStartTime);
 
         // Lottery end time
         const endTimeFromCall = new Date(
             ((await getLotteryStartTimeStamp()).toNumber() + (await getLotteryDurationTime()).toNumber()) * 1000
         ).toLocaleTimeString();
         setLotteryEndTime(endTimeFromCall);
-        // console.log("Lottery end time:", lotteryEndTime);
 
         // Latest lottery winner
         const latestWinnerFromCall = (await getLatestLotteryWinner()).toString();
         setLatestWinner(latestWinnerFromCall);
-        // console.log(`Latest lottery winner: ${latestWinner}`);
     }
 
     //////////////////////
@@ -312,7 +281,7 @@ export default function Lottery() {
                                     <div className="lotteryWinnerCongrats">!!! Congratulations !!!</div>
                                 </div>
                             ) : (
-                                <div className="lotteryWinnerCaption">You didn't won the lottery!</div>
+                                <div className="lotteryWinnerCaption">You didn't win the lottery!</div>
                             )}
                         </div>
                     ) : (

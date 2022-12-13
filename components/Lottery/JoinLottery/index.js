@@ -3,23 +3,13 @@ import { useState, useEffect } from "react";
 import JoinLotteryModal from "./JoinLotteryModal";
 
 export default function JoinLottery({ lotteryAddress, lotteryAbi, updateUI }) {
-    ///////////////////
-    //  State Hooks  //
-    ///////////////////
     const [showJoinLotteryModal, setShowJoinLotteryModal] = useState(false);
     const hideJoinLotteryModal = () => setShowJoinLotteryModal(false);
     const [entranceFee, setEntranceFee] = useState("0");
 
-    ////////////////////
-    // useEffect Hook //
-    ////////////////////
     useEffect(() => {
         handleGetLotteryEntranceFee();
     }, [showJoinLotteryModal]);
-
-    ////////////////////////
-    // Contract Functions //
-    ////////////////////////
 
     // Contract function: getLotteryEntranceFee
     const { runContractFunction: getLotteryEntranceFee } = useWeb3Contract({
@@ -29,15 +19,10 @@ export default function JoinLottery({ lotteryAddress, lotteryAbi, updateUI }) {
         params: {},
     });
 
-    ///////////////////////
-    // Handler Functions //
-    ///////////////////////
-
     // Get lottery entrance fee handler
     const handleGetLotteryEntranceFee = async () => {
         const entranceFeeFromCall = (await getLotteryEntranceFee()).toString();
         setEntranceFee(entranceFeeFromCall);
-        // console.log(`Entrance fee: ${entranceFee} ETH`);
     };
 
     return (
